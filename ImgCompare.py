@@ -10,14 +10,14 @@ class Image:
 
         :param img: file path for the new image
         """
-        self.img = img
+        self.img = cv2.imread(img)
         self.value = np.sum(self.img)
 
     def check(self):
         images = []
 
         # open the live data of existing images that make up the pano
-        folderPath = './LiveData/PanoImg'
+        folderPath = './LiveData/PanoImage'
         for file in os.listdir(folderPath):
             dictObj = {
                 'image': np.load(folderPath + '/' + file),
@@ -31,23 +31,13 @@ class Image:
             # calculate mean square error
             meanSquareError = np.square(np.subtract(self.img, img['image'])).mean()
             # check thresholding values
-            if meanSquareError < 60:
+            if meanSquareError < 40:
                 print('[INFO] Matching Image found: ' + img['fileName'])
                 print('[INFO] Updating saved image...')
-                np.save(folderPath + '/' + img['fileName'], self.img)
+                # np.save(folderPath + '/' + img['fileName'], self.img)
                 print('[INFO] Image saved...')
 
+                hozConcat = np.concatenate((self.img, img['image']), axis=1)
 
-img = cv2.imread('./data/images/scene02041.png')
-i = Image(img)
-i.check()
-
-# path = './LiveData/PanoImg/test3'
-#
-# # when we open the image we will save is as such
-# dictionary = {
-#     'image': img,
-#     'fileName': path
-# }
-#
-# np.save(dictionary['fileName'], img)
+                cv2.imshow('HORIZONTAL', hozConcat)
+                cv2.waitKey(0)

@@ -15,13 +15,14 @@ def InitialisePanorama(path=None):
     """
     files = []
     images = []
-    for file in os.listdir('./Resources/Images/'):
-        if '.png' in file:
-            files.append('./Resources/Images/' + file)
-
-    for path in files:
-        img = cv2.imread(path)
-        images.append(img)
+    if not path:
+        for file in os.listdir('./Resources/Images/'):
+            if '.png' in file:
+                files.append('./Resources/Images/' + file)
+    else:
+        for file in os.listdir(path):
+            img = cv2.imread(path + file)
+            images.append(img)
 
     return imageStitch(images)
 
@@ -50,7 +51,7 @@ def imageStitch(imgIn):
     for i in range(len(images)):
         if i + 1 < len(images):
             # check for differences in images
-            if imageDifference(images[i]['img'], images[i + 1]['img']):
+            if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 1300):
                 if imgs:
                     for j in imgs:
                         if j['id'] == images[i]['id']:
@@ -89,6 +90,11 @@ def ImageStitch(images):
     # initialize OpenCV's image sticher object and then perform the image
     # stitching
     print("[INFO] stitching " + str(len(images)) + " images...")
+
+    # save images that are going to be stitched
+    folderPath = './LiveData/PanoImage/'
+    for idx, img in enumerate(images):
+        np.save(folderPath + str(idx), img)
 
     stitcher = cv2.createStitcher() if imutils.is_cv3() else cv2.Stitcher_create()
     (status, stitched) = stitcher.stitch(images)
