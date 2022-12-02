@@ -26,18 +26,38 @@ class Image:
             images.append(dictObj)
 
         # compare the list of these images to see if the mse is extremely similar
+        count = 0
         for img in images:
 
             # calculate mean square error
             meanSquareError = np.square(np.subtract(self.img, img['image'])).mean()
             # check thresholding values
-            if meanSquareError < 40:
+            if meanSquareError < 80:
+                count += 1
                 print('[INFO] Matching Image found: ' + img['fileName'])
                 print('[INFO] Updating saved image...')
-                # np.save(folderPath + '/' + img['fileName'], self.img)
+                np.save(folderPath + '/' + img['fileName'], self.img)
                 print('[INFO] Image saved...')
 
-                hozConcat = np.concatenate((self.img, img['image']), axis=1)
+                #scale images
+                scalePercent = 60
+                width = int(self.img.shape[1] * scalePercent / 100)
+                height = int(self.img.shape[0] * scalePercent / 100)
+                dim = (width, height)
+                width1 = int(img['image'].shape[1] * scalePercent / 100)
+                height1 = int(img['image'].shape[0] * scalePercent / 100)
+                dim1 = (width1, height1)
 
-                cv2.imshow('HORIZONTAL', hozConcat)
-                cv2.waitKey(0)
+                resized = cv2.resize(self.img, dim, interpolation=cv2.INTER_AREA)
+                resized1 = cv2.resize(img['image'], dim, interpolation=cv2.INTER_AREA)
+
+                hozConcat = np.concatenate((resized, resized1), axis=1)
+
+                # cv2.imshow('HORIZONTAL', hozConcat)
+                # cv2.waitKey(0)
+                break
+        print('[INFO] Number of matches: ' + str(count))
+        if count > 0:
+            return True
+        else:
+            return False

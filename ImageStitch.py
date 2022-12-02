@@ -2,6 +2,7 @@ import os
 import time
 import cv2
 import imutils
+import numpy
 import numpy as np
 from sewar.full_ref import mse
 
@@ -25,6 +26,15 @@ def InitialisePanorama(path=None):
             images.append(img)
 
     return imageStitch(images)
+
+
+def LoadNumpy():
+    folderPath = './LiveData/PanoImage/'
+    imgs = []
+    for file in os.listdir(folderPath):
+        imgs.append(numpy.load(folderPath + file))
+
+    return imageStitchNoCheck(imgs)
 
 
 def imageStitch(imgIn):
@@ -76,6 +86,58 @@ def imageStitch(imgIn):
     print('[INFO] Image comparison complete.\nTime Taken: ' + str((round((end - start), 6))) + " [s]")
 
     return ImageStitch(stitchImgs)
+
+
+def imageStitchNoCheck(imgIn):
+    """
+    Compares the imgIn images and cleans up bulk data for panoramic stitching
+
+    :param imgIn: a openCV image array
+    :return: returns the panoramic openCV image
+    """
+    start = time.time()
+    print('[INFO] Image comparison starting with ' + str(len(imgIn)) + ' images')
+    images = []
+    for index, i in enumerate(imgIn):
+        imgDict = {
+            'id': index,
+            'img': i
+        }
+        images.append(imgDict)
+
+    # What a fucking mess
+    imgs = []
+    first = True
+    second = True
+    for i in range(len(images)):
+        if i + 1 < len(images):
+            # check for differences in images
+            # if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 1300):
+                if imgs:
+                    for j in imgs:
+                        if j['id'] == images[i]['id']:
+                            first = False
+                        if j['id'] == images[i + 1]['id']:
+                            second = False
+                    if first:
+                        imgs.append(images[i])
+                    if second:
+                        imgs.append(images[i + 1])
+                else:
+                    imgs.append(images[i])
+                    imgs.append(images[i + 1])
+        first = True
+        second = True
+    # unpack dict
+    stitchImgs = []
+    for i in imgs:
+        stitchImgs.append(i['img'])
+
+    end = time.time()
+    print('[INFO] Image comparison complete.\nTime Taken: ' + str((round((end - start), 6))) + " [s]")
+
+    return ImageStitch(stitchImgs)
+
 
 
 def ImageStitch(images):
