@@ -2,6 +2,7 @@ import os
 import time
 import cv2
 import imutils
+import numpy
 import numpy as np
 from sewar.full_ref import mse
 
@@ -15,15 +16,25 @@ def InitialisePanorama(path=None):
     """
     files = []
     images = []
-    for file in os.listdir('./Resources/Images/'):
-        if '.png' in file:
-            files.append('./Resources/Images/' + file)
-
-    for path in files:
-        img = cv2.imread(path)
-        images.append(img)
+    if not path:
+        for file in os.listdir('./Resources/Images/'):
+            if '.png' in file:
+                files.append('./Resources/Images/' + file)
+    else:
+        for file in os.listdir(path):
+            img = cv2.imread(path + file)
+            images.append(img)
 
     return imageStitch(images)
+
+
+def LoadNumpy():
+    folderPath = './LiveData/PanoImage/'
+    imgs = []
+    for file in os.listdir(folderPath):
+        imgs.append(numpy.load(folderPath + file))
+
+    return imageStitchNoCheck(imgs)
 
 
 def imageStitch(imgIn):
@@ -50,7 +61,7 @@ def imageStitch(imgIn):
     for i in range(len(images)):
         if i + 1 < len(images):
             # check for differences in images
-            if imageDifference(images[i]['img'], images[i + 1]['img']):
+            if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 1300):
                 if imgs:
                     for j in imgs:
                         if j['id'] == images[i]['id']:
@@ -77,6 +88,58 @@ def imageStitch(imgIn):
     return ImageStitch(stitchImgs)
 
 
+def imageStitchNoCheck(imgIn):
+    """
+    Compares the imgIn images and cleans up bulk data for panoramic stitching
+
+    :param imgIn: a openCV image array
+    :return: returns the panoramic openCV image
+    """
+    start = time.time()
+    print('[INFO] Image comparison starting with ' + str(len(imgIn)) + ' images')
+    images = []
+    for index, i in enumerate(imgIn):
+        imgDict = {
+            'id': index,
+            'img': i
+        }
+        images.append(imgDict)
+
+    # What a fucking mess
+    imgs = []
+    first = True
+    second = True
+    for i in range(len(images)):
+        if i + 1 < len(images):
+            # check for differences in images
+            # if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 1300):
+                if imgs:
+                    for j in imgs:
+                        if j['id'] == images[i]['id']:
+                            first = False
+                        if j['id'] == images[i + 1]['id']:
+                            second = False
+                    if first:
+                        imgs.append(images[i])
+                    if second:
+                        imgs.append(images[i + 1])
+                else:
+                    imgs.append(images[i])
+                    imgs.append(images[i + 1])
+        first = True
+        second = True
+    # unpack dict
+    stitchImgs = []
+    for i in imgs:
+        stitchImgs.append(i['img'])
+
+    end = time.time()
+    print('[INFO] Image comparison complete.\nTime Taken: ' + str((round((end - start), 6))) + " [s]")
+
+    return ImageStitch(stitchImgs)
+
+
+
 def ImageStitch(images):
     """
     Performs panoramic image stitching.
@@ -89,6 +152,11 @@ def ImageStitch(images):
     # initialize OpenCV's image sticher object and then perform the image
     # stitching
     print("[INFO] stitching " + str(len(images)) + " images...")
+
+    # save images that are going to be stitched
+    folderPath = './LiveData/PanoImage/'
+    for idx, img in enumerate(images):
+        np.save(folderPath + str(idx), img)
 
     stitcher = cv2.createStitcher() if imutils.is_cv3() else cv2.Stitcher_create()
     (status, stitched) = stitcher.stitch(images)
