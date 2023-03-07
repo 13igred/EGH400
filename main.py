@@ -45,13 +45,14 @@ if bufferValid:
     for file in os.listdir(folderPath):
         print()
         print('[INFO] Checking Image ' + file)
-        updated, imgIdx = pano.compareUpdate(folderPath + file, 0)
+        compareImage = cv2.imread(folderPath + file)
+        updated, arrIdx, imgIdx = pano.compareUpdate(compareImage, 0)
         if updated:
             print('[INFO] Panorama composite image no. ' + str(imgIdx) + ' has been updated')
             count += 1
             if count > 10:
                 count = 0
-                pano.updatePanorama(0)
+                pano.updatePanorama()
                 pano.displayPanorama(0)
                 pano.savePanorama()
 

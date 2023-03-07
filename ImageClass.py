@@ -4,7 +4,51 @@ import torchvision.transforms as transforms
 import numpy as np
 import cv2
 
+### NOT USED ####
+### NOT USED ####
+### NOT USED ####
+### NOT USED ####
+### NOT USED ####
+
+
 class Image:
+    """
+    A class ued to detect objects within an image.
+
+    ...
+
+    Attributes
+    ----------
+    img : numpy
+        A cv2 image
+    torchModel : pytorch model
+        A pytorch model created using predefined weights suited to find flags
+    results : pytorch results
+        results of the pytorch detection algorithm
+    flagLocations: list
+        the locations of flags found in the image provided
+
+    Methods
+    -------
+    detectObject(img)
+        Adds the input image to the classes image buffer
+
+    createPanorama()
+        Stitches together images to create the panorama
+
+    compareUpdate(filePath, panoramaIndex)
+        Compares a given image to each of the images in the panorama composite array
+
+    updatePanorama(panoramaIndex)
+        Updates the panorama with the compositeImages
+
+    displayPanorama(timeDelay=0)
+                Displays the panoramic image, exit display by pressing 'any' key
+
+    savePanorama(filePath=None)
+            Saves the panorama in the specified file locaiton or in a default locations
+
+    """
     def __init__(self, img, model):
         """
 

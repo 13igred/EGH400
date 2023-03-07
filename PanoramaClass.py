@@ -19,21 +19,67 @@ def loadImages():
 
 
 class Panorama:
+    """
+    A class ued to build a panoramic image
+
+    ...
+
+    Attributes
+    ----------
+    panoramaImage : list
+        An array housing the built panoramas, technically an array of numpy[]
+    compositeImages : list
+        An array housing the images that built each panorama, technically an array of numpy[]
+    imageBuffer : list
+        An array housing all the images that are to be used to build the initial panorama
+
+    Methods
+    -------
+    addImageToBuffer(img)
+        Adds the input image to the classes image buffer
+
+    createPanorama()
+        Stitches together images to create the panorama
+
+    compareUpdate(filePath, panoramaIndex)
+        Compares a given image to each of the images in the panorama composite array
+
+    updatePanorama(panoramaIndex)
+        Updates the panorama with the compositeImages
+
+    displayPanorama(timeDelay=0)
+                Displays the panoramic image, exit display by pressing 'any' key
+
+    savePanorama(filePath=None)
+            Saves the panorama in the specified file locaiton or in a default locations
+
+    """
     def __init__(self):
         """
-        Creates an instance of the Panorama class.
+        Initialise the panorama class
+
         """
 
         self.panoramaImage = []
         self.compositeImages = []
         self.imageBuffer = []
-        self.splitImages = []
 
     def addImageToBuffer(self, img):
+        """
+        Adds the input image to the classes image buffer
+
+        Parameters
+        ----------
+        img : numpy
+            A cv2 image
+        """
         self.imageBuffer.append(img)
 
     def createPanorama(self):
-        valid = False
+        """
+        Stitches together images to create the panorama
+        """
+        splitImages = []
 
         if len(self.imageBuffer) > 20:
             panoList = []
@@ -58,7 +104,7 @@ class Panorama:
                         if jdx - bufferSize > 10:
                             for i in range(bufferSize, jdx + 1):
                                 panoList.append(self.imageBuffer[i])
-                            self.splitImages.append(panoList)
+                            splitImages.append(panoList)
                             idx = jdx
                             jdx += 1
                             bufferSize = len(panoList)
@@ -69,9 +115,9 @@ class Panorama:
 
             # check if all images were similar enough.
             if bufferSize == 0:
-                self.splitImages.append(self.imageBuffer)
+                splitImages.append(self.imageBuffer)
 
-            for images in self.splitImages:
+            for images in splitImages:
                 tempPano, tempComp = ImageStitch.InitialisePanorama(images)
                 self.panoramaImage.append(tempPano)
                 self.compositeImages.append(tempComp)
@@ -80,48 +126,50 @@ class Panorama:
             print("[ERROR] Not enough images in the buffer.")
             return False
 
-    def compareUpdate(self, filePath, panoramaIndex):
+    def compareUpdate(self, image):
         """
         Compares a given image to each of the images in the panorama composite array
 
-        :param filePath: string containing the path of the image to be compared
-        :return: Boolean - True for updated, false for no action taken
+        Parameters
+        ----------
+        image : numpy
+            A cv2 image
         """
-
-        image = cv2.imread(filePath)
 
         minMse = 100000
         minIdx = -1
-        for idx, i in enumerate(self.compositeImages[panoramaIndex]):
-            mseValue = mse(i, image)
-            # calculate the image that has the lowest mse, or is the most similar to the current buffer
-            if mseValue < minMse:
-                minMse = mseValue
-                minIdx = idx
-        print('[INFO] MSE: ' + str(minMse))
-        print('[INFO] IDX: ' + str(minIdx))
-        # if the images are similar enough, update  internal register
-        if minMse < 1500:
-            self.compositeImages[panoramaIndex][minIdx] = image
-            return True, minIdx
-        else:
-            return False, -1
+        for arrIdx, imgArray in enumerate(self.compositeImages):
+            for imgIdx, img in enumerate(imgArray):
+                mseValue = mse(img, image)
+                # calculate the image that has the lowest mse, or is the most similar to the current buffer
+                if mseValue < minMse:
+                    minMse = mseValue
+                    minIdx = imgIdx
+            print('[INFO] MSE: ' + str(minMse))
+            print('[INFO] IDX: ' + str(minIdx))
+            # if the images are similar enough, update  internal register
+            if minMse < 1500:
+                self.compositeImages[arrIdx][minIdx] = image
+                return True, arrIdx, minIdx
+            else:
+                return False, -1, -1
 
-    def updatePanorama(self, panoramaIndex):
+    def updatePanorama(self):
         """
         Generatess a panoramic image based on images in the internal buffer
 
-        :return:
         """
-
-        self.panoramaImage[panoramaIndex], self.compositeImages[panoramaIndex] = ImageStitch.imageStitchNoCheck(self.compositeImages[panoramaIndex])
+        for panoramaIndex, _ in enumerate(self.panoramaImage):
+            self.panoramaImage[panoramaIndex], self.compositeImages[panoramaIndex] = ImageStitch.imageStitchNoCheck(self.compositeImages[panoramaIndex])
 
     def displayPanorama(self, timeDelay=0):
         """
         Displays the panoramic image, exit display by pressing 'any' key
 
-        :param timeDelay: specify time delay image is shown for in mS, default is displayed until key press
-        :return:
+        Parameters
+        ----------
+        timeDelay: int
+            specify time delay image is shown for in mS, default is displayed until key press
         """
         for img in self.panoramaImage:
             cv2.imshow('PANORAMA', img)
@@ -133,7 +181,6 @@ class Panorama:
         """
         Saves the panorama in the specified file locaiton or in a default locations
 
-        :return:
         """
 
         for idx, img in enumerate(self.panoramaImage):

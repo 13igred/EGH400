@@ -6,10 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'EGH400 - SLSQ Flag Detection'
+project = 'EGH400 SQSQ Flag Detect'
 copyright = '2023, David Maloney'
 author = 'David Maloney'
-release = '01/06/2023'
+release = '01-06-2023'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -17,7 +17,7 @@ release = '01/06/2023'
 extensions = []
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = []
 
 
 

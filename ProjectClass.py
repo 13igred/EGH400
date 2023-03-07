@@ -3,7 +3,57 @@ import math
 
 
 class Project:
+    """
+    This class handles projecting and drawing safe swim zones on the images provided
+
+    ...
+
+    Attributes
+    ----------
+    x1 : int
+            locations that flags were detected
+    y1 : int
+        locations that flags were detected
+    x2 : int
+        locations that flags were detected
+    y2 : int
+        locations that flags were detected
+    image : numpy
+        a cv2 image
+    middle : list
+         an array contain the mid point of the found flags
+
+    Methods
+    -------
+    calculate()
+        calculate the project zones for the flags.
+
+    markup
+        depreciated use drawMarkup.
+
+    drawMarkup(pt1, pt2, display)
+        draws the markup onto the image provided and returns that image.
+
+    """
     def __init__(self, x1, y1, x2, y2, image):
+        """
+        initialise the projection class
+
+        Parameter
+        ----------
+        x1 : int
+                locations that flags were detected
+        y1 : int
+            locations that flags were detected
+        x2 : int
+            locations that flags were detected
+        y2 : int
+            locations that flags were detected
+        image : numpy
+            a cv2 image
+        middle : list
+             an array contain the mid point of the found flags
+        """
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
@@ -12,6 +62,18 @@ class Project:
         self.middle = []
 
     def calculate(self):
+        """
+        calculate the projection zones for the flags.
+
+        Return
+        ------
+        pt1 : list
+            contains the location of the 1st flag
+        pt2 : list
+            contains the location of the 2nd flag
+        bool
+            true if successful
+        """
         pt1 = 0
         pt2 = 0
 
@@ -59,6 +121,9 @@ class Project:
         return pt1, pt2, True
 
     def markup(self):
+        """
+        Depreciated use drawMarkup
+        """
         if len(self.middle) == 2:
             markupImage = ImageHelper.drawLine(self.image, self.middle[0], self.middle[1])
             ImageHelper.DisplayImage(markupImage, 'MARKUP IMAGE')
@@ -66,6 +131,23 @@ class Project:
             print('[ERROR] incorrect number of flags detected.')
 
     def drawMarkup(self, pt1, pt2, display):
+        """
+        draws the markup onto the image provided and returns that image.
+
+        Parameter
+        ----------
+        pt1 : list
+            locations of the first points to be drawn
+        pt2: list
+            locations of the second points to be drawn
+        display: bool
+            Displays the image if true
+
+        Return
+        ------
+        numpy
+            a cv2 image
+        """
         if len(self.middle) == 2:
             markupImage = ImageHelper.drawLine(self.image, self.middle[0], pt1)
             markupImage = ImageHelper.drawLine(self.image, self.middle[1], pt2)

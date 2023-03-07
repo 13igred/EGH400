@@ -1,14 +1,34 @@
-import common.ImageHelper as ImageHelper
-import torch
-import torchvision.transforms as transforms
-import numpy as np
 import cv2
+import torch
+import common.ImageHelper as ImageHelper
 
 class Detector:
+    """
+    A class ued to detect flags in an image
+
+    ...
+
+    Attributes
+    ----------
+    model : pytorch model
+        A pytorch model created using predefined weights suited to find flags
+
+    Methods
+    -------
+    detect(image)
+        Given an image will detect objects and return an array of x,y locations of those objects
+
+    markup(image, x1, y1, x2, y2, display)
+        Given x,y points, a cv2 image and a boolean for display.
+        This will draw a box around the points, and display the image if true
+    """
+
     def __init__(self, weightsPath):
         """
-
-        :param weightsPath: [String] File location of the YOLOv5 weights for the model.
+        Parameters
+        ----------
+        weightsPath: str
+            File location of the YOLOv5 weights for the model.
         """
 
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=weightsPath, force_reload=True).eval()
@@ -17,8 +37,20 @@ class Detector:
         """
         Given an image will detect objects and return an array of x,y locations of those objects
 
-        :param image: [numpy] cv2 image
-        :return: [array] x,y locations
+        Parameters
+        ----------
+        image: numpy
+            cv2 image
+        Return
+        ------
+        x1 : int
+            locations that flags were detected
+        y1 : int
+            locations that flags were detected
+        x2 : int
+            locations that flags were detected
+        y2 : int
+            locations that flags were detected
         """
 
         # fix colour from BGR to RGB
@@ -46,11 +78,27 @@ class Detector:
     def markup(self, image, x1, y1, x2, y2, display):
         """
         Given x,y points, a cv2 image and a boolean for display.
-        This will markup the image with the locations and display the image
+        This will draw a box around the points, and display the image if true
 
-        :param location: [array] x,y points
-        :param image: [numpy] cv2 image
-        :param display: [boolean]
+        Parameters
+        ----------
+        image: numpy
+            cv2 image
+        x1: int
+            location of flag detected
+        y1: int
+            location of flag detected
+        x2: int
+            location of flag detected
+        y2: int
+            location of flag detected
+        display: bool
+            True if image should be displayed
+
+        Return
+        ------
+        markup : numpy
+            cv2 image with markup drawn
         """
 
         for idx, _ in enumerate(x1):

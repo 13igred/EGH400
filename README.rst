@@ -1,0 +1,2 @@
+** EGH400 SLSQ Flag Detect ** is a python program build for my Electrical Engineering thesis project.
+It detects flags in video footage, creates a panorama from video footage and projects safe swim zones into the ocean.

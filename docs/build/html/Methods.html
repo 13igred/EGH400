@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Methods &#8212; EGH400 SQSQ Flag Detect 01-06-2023 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Classes" href="Classes.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="methods">
+<h1>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">¶</a></h1>
+<section id="creating-a-panorama">
+<h2>Creating A Panorama<a class="headerlink" href="#creating-a-panorama" title="Permalink to this heading">¶</a></h2>
+<p>The first step is to add images to the classes buffer</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="addImageToBuffer">
+<span class="sig-name descname"><span class="pre">addImageToBuffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#addImageToBuffer" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Adds</span> <span class="pre">the</span> <span class="pre">input</span> <span class="pre">image</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">classes</span> <span class="pre">image</span> <span class="pre">buffer</span></span></dt>
+<dd><section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>img<span class="classifier">numpy</span></dt><dd><p>A cv2 image</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<p>Once the buffer has a sufficient number of images &gt; 20, createPanorama can perform the image stitching process.</p>
+<p>Depending on the amount of images this can take a significant time.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="createPanorama">
+<span class="sig-name descname"><span class="pre">createPanorama</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#createPanorama" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Stitches</span> <span class="pre">together</span> <span class="pre">images</span> <span class="pre">to</span> <span class="pre">create</span> <span class="pre">the</span> <span class="pre">panorama</span></span></dt>
+<dd></dd></dl>
+
+<p>Once a panorama has been built it can be continuously updated by using compareUpdate.</p>
+<p>This function compares the given image with the images that made up the panorama.</p>
+<p>If there is a significant similarity between images the passes image becomes the new basis for the next panorama.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="compareUpdate">
+<span class="sig-name descname"><span class="pre">compareUpdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#compareUpdate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Compares</span> <span class="pre">a</span> <span class="pre">given</span> <span class="pre">image</span> <span class="pre">to</span> <span class="pre">each</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">images</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">panorama</span> <span class="pre">composite</span> <span class="pre">array</span></span></dt>
+<dd><section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>image<span class="classifier">numpy</span></dt><dd><p>A cv2 image</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<p>updatePanorama is used to generate a new panorama based on updated images.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="updatePanorama">
+<span class="sig-name descname"><span class="pre">updatePanorama</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#updatePanorama" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Generatess</span> <span class="pre">a</span> <span class="pre">panoramic</span> <span class="pre">image</span> <span class="pre">based</span> <span class="pre">on</span> <span class="pre">images</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">internal</span> <span class="pre">buffer</span></span></dt>
+<dd></dd></dl>
+
+<p>To display the panorama, displayPanorama can be used.</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">displayPanorama(timeDelay=0):</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Displays</span> <span class="pre">the</span> <span class="pre">panoramic</span> <span class="pre">image,</span> <span class="pre">exit</span> <span class="pre">display</span> <span class="pre">by</span> <span class="pre">pressing</span> <span class="pre">'any'</span> <span class="pre">key</span></span></dt>
+<dd><section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>timeDelay: int</dt><dd><p>specify time delay image is shown for in mS, default is displayed until key press</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<p>Finally to save the panorama</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">savePanorama(path=None):</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Saves</span> <span class="pre">the</span> <span class="pre">panorama</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">specified</span> <span class="pre">file</span> <span class="pre">location</span> <span class="pre">or</span> <span class="pre">in</span> <span class="pre">a</span> <span class="pre">default</span> <span class="pre">locations</span></span></dt>
+<dd></dd></dl>
+
+</section>
+<section id="detecting-flags-in-an-image">
+<h2>Detecting Flags in an Image<a class="headerlink" href="#detecting-flags-in-an-image" title="Permalink to this heading">¶</a></h2>
+<p>The detector class handles finding flags in an image.</p>
+<p>It creates a yolov5 model using pytorch and weights that are included in the github repo.</p>
+<p>the methods used include:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">detect(image):</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Given</span> <span class="pre">an</span> <span class="pre">image</span> <span class="pre">will</span> <span class="pre">detect</span> <span class="pre">objects</span> <span class="pre">and</span> <span class="pre">return</span> <span class="pre">an</span> <span class="pre">array</span> <span class="pre">of</span> <span class="pre">x,y</span> <span class="pre">locations</span> <span class="pre">of</span> <span class="pre">those</span> <span class="pre">objects</span></span></dt>
+<dd><section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>image: numpy</dt><dd><p>cv2 image</p>
+</dd>
+</dl>
+</section>
+<section id="return">
+<h3>Return<a class="headerlink" href="#return" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>x1<span class="classifier">int</span></dt><dd><p>locations that flags were detected</p>
+</dd>
+<dt>y1<span class="classifier">int</span></dt><dd><p>locations that flags were detected</p>
+</dd>
+<dt>x2<span class="classifier">int</span></dt><dd><p>locations that flags were detected</p>
+</dd>
+<dt>y2<span class="classifier">int</span></dt><dd><p>locations that flags were detected</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">markup(self,</span> <span class="pre">image,</span> <span class="pre">x1,</span> <span class="pre">y1,</span> <span class="pre">x2,</span> <span class="pre">y2,</span> <span class="pre">display):</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Given</span> <span class="pre">x,y</span> <span class="pre">points,</span> <span class="pre">a</span> <span class="pre">cv2</span> <span class="pre">image</span> <span class="pre">and</span> <span class="pre">a</span> <span class="pre">boolean</span> <span class="pre">for</span> <span class="pre">display.</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">This</span> <span class="pre">will</span> <span class="pre">draw</span> <span class="pre">a</span> <span class="pre">box</span> <span class="pre">around</span> <span class="pre">the</span> <span class="pre">points,</span> <span class="pre">and</span> <span class="pre">display</span> <span class="pre">the</span> <span class="pre">image</span> <span class="pre">if</span> <span class="pre">true</span></span></dt>
+<dd><section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>image: numpy</dt><dd><p>cv2 image</p>
+</dd>
+<dt>x1: int</dt><dd><p>location of flag detected</p>
+</dd>
+<dt>y1: int</dt><dd><p>location of flag detected</p>
+</dd>
+<dt>x2: int</dt><dd><p>location of flag detected</p>
+</dd>
+<dt>y2: int</dt><dd><p>location of flag detected</p>
+</dd>
+<dt>display: bool</dt><dd><p>True if image should be displayed</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Return<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>markup<span class="classifier">numpy</span></dt><dd><p>cv2 image with markup drawn</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="projecting-safe-swim-zones">
+<h2>Projecting Safe Swim Zones<a class="headerlink" href="#projecting-safe-swim-zones" title="Permalink to this heading">¶</a></h2>
+<p>The final aspect of this project was to project safe swim zones onto the panoramic images.</p>
+<p>The goal of this was to assist life savers in easily identifying those outside of the safe swim zone.</p>
+<p>The methods are detailed below:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">calculate():</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">calculate</span> <span class="pre">the</span> <span class="pre">projection</span> <span class="pre">zones</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">flags.</span></span></dt>
+<dd><section id="id6">
+<h3>Return<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>pt1<span class="classifier">list</span></dt><dd><p>contains the location of the 1st flag</p>
+</dd>
+<dt>pt2<span class="classifier">list</span></dt><dd><p>contains the location of the 2nd flag</p>
+</dd>
+<dt>bool</dt><dd><p>true if successful</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">markup():</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Depreciated</span> <span class="pre">use</span> <span class="pre">drawMarkup</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">drawMarkup(pt1,</span> <span class="pre">pt2,</span> <span class="pre">display):</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">draws</span> <span class="pre">the</span> <span class="pre">markup</span> <span class="pre">onto</span> <span class="pre">the</span> <span class="pre">image</span> <span class="pre">provided</span> <span class="pre">and</span> <span class="pre">returns</span> <span class="pre">that</span> <span class="pre">image.</span></span></dt>
+<dd><section id="parameter">
+<h3>Parameter<a class="headerlink" href="#parameter" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>pt1<span class="classifier">list</span></dt><dd><p>locations of the first points to be drawn</p>
+</dd>
+<dt>pt2: list</dt><dd><p>locations of the second points to be drawn</p>
+</dd>
+<dt>display: bool</dt><dd><p>Displays the image if true</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Return<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>numpy</dt><dd><p>a cv2 image</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">EGH400 SQSQ Flag Detect</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Classes.html">Classes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-panorama">Creating A Panorama</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#addImageToBuffer"><code class="docutils literal notranslate"><span class="pre">addImageToBuffer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#createPanorama"><code class="docutils literal notranslate"><span class="pre">createPanorama()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compareUpdate"><code class="docutils literal notranslate"><span class="pre">compareUpdate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#updatePanorama"><code class="docutils literal notranslate"><span class="pre">updatePanorama()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#detecting-flags-in-an-image">Detecting Flags in an Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#projecting-safe-swim-zones">Projecting Safe Swim Zones</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Classes.html" title="previous chapter">Classes</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, David Maloney.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/Methods.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
