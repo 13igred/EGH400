@@ -7,34 +7,25 @@ import numpy as np
 from sewar.full_ref import mse
 
 
-def InitialisePanorama(path=None):
+def InitialisePanorama(images):
     """
     Builds a panorama image
 
     :param path: file path where the array of images is kept
     :return returns the panoramic openCV image
     """
-    files = []
-    images = []
-    if not path:
-        for file in os.listdir('./Resources/Images/'):
-            if '.png' in file:
-                files.append('./Resources/Images/' + file)
-    else:
-        for file in os.listdir(path):
-            img = cv2.imread(path + file)
-            images.append(img)
+    pano, compositeImg = imageStitch(images)
 
-    return imageStitch(images)
+    return pano, compositeImg
 
 
-def LoadNumpy():
-    folderPath = './LiveData/PanoImage/'
-    imgs = []
-    for file in os.listdir(folderPath):
-        imgs.append(numpy.load(folderPath + file))
-
-    return imageStitchNoCheck(imgs)
+# def LoadNumpy():
+#     folderPath = './LiveData/PanoImage/'
+#     imgs = []
+#     for file in os.listdir(folderPath):
+#         imgs.append(numpy.load(folderPath + file))
+#
+#     return imageStitchNoCheck(imgs)
 
 
 def imageStitch(imgIn):
@@ -60,8 +51,8 @@ def imageStitch(imgIn):
     second = True
     for i in range(len(images)):
         if i + 1 < len(images):
-            # check for differences in images
-            if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 1300):
+            # check for differences in images # Base numbers are 2000 and 1300
+            if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 700):
                 if imgs:
                     for j in imgs:
                         if j['id'] == images[i]['id']:
@@ -85,7 +76,9 @@ def imageStitch(imgIn):
     end = time.time()
     print('[INFO] Image comparison complete.\nTime Taken: ' + str((round((end - start), 6))) + " [s]")
 
-    return ImageStitch(stitchImgs)
+    pano, compositeImg = ImageStitch(stitchImgs)
+
+    return pano, compositeImg
 
 
 def imageStitchNoCheck(imgIn):
@@ -111,8 +104,6 @@ def imageStitchNoCheck(imgIn):
     second = True
     for i in range(len(images)):
         if i + 1 < len(images):
-            # check for differences in images
-            # if imageDifference(images[i]['img'], images[i + 1]['img'], 2000, 1300):
                 if imgs:
                     for j in imgs:
                         if j['id'] == images[i]['id']:
@@ -154,9 +145,9 @@ def ImageStitch(images):
     print("[INFO] stitching " + str(len(images)) + " images...")
 
     # save images that are going to be stitched
-    folderPath = './LiveData/PanoImage/'
-    for idx, img in enumerate(images):
-        np.save(folderPath + str(idx), img)
+    # folderPath = './LiveData/PanoImg/'
+    # for idx, img in enumerate(images):
+    #     np.save(folderPath + str(idx), img)
 
     stitcher = cv2.createStitcher() if imutils.is_cv3() else cv2.Stitcher_create()
     (status, stitched) = stitcher.stitch(images)
@@ -220,14 +211,14 @@ def ImageStitch(images):
         end = time.time()
         print('[INFO] Stitching complete.\nTime Taken: ' + str((round((end - start), 6))) + " [s]")
 
-        return stitched
+        return stitched, images
 
         # write the output stitched image to disk
         # display the output stitched image to our screen
         # cv2.imshow("Stitched", stitched)
         # cv2.waitKey(0)
 
-    # otherwise the stitching failed, likely due to not enough keypoints)
+    # otherwise the stitching failed, likely due to not enough keypoints
     # being detected
     else:
         print("[ERROR] image stitching failed ({})".format(status))
